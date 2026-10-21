@@ -51,6 +51,7 @@ if (!reduced && window.Lenis) {
   }
   lenis.stop();
 }
+window.__lenis = lenis;
 
 function scrollToTarget(target) {
   const el = typeof target === "string" ? $(target) : target;
@@ -85,6 +86,7 @@ burger.addEventListener("click", () => {
   open ? lenis?.stop() : lenis?.start();
 });
 addEventListener("keydown", (e) => e.key === "Escape" && closeDrawer());
+window.__closeDrawer = closeDrawer;
 
 let lastY = 0;
 function onScroll() {
@@ -138,7 +140,7 @@ function itemHTML([name, price, desc = "", star = false], q) {
     ? `<span class="mitem__price mitem__price--sizes">${price.map((p) => `<span>${money(p)}</span>`).join("")}</span>`
     : `<span class="mitem__price">${money(price)}</span>`;
   return `<li class="mitem">
-    <div class="mitem__row"><span class="mitem__name">${highlight(name, q)}${star ? '<span class="mitem__star">✦ Signature</span>' : ""}</span><span class="mitem__dots"></span>${priceHTML}</div>
+    <div class="mitem__row"><span class="mitem__name">${highlight(name, q)}${star ? '<span class="mitem__star">✦ Signature</span>' : ""}</span><span class="mitem__dots"></span>${priceHTML}<button class="madd" type="button" data-add="${esc(name)}" aria-label="Add ${esc(name)} to your order"><span class="madd__plus" aria-hidden="true"></span><span class="madd__n"></span></button></div>
     ${desc ? `<p class="mitem__desc">${highlight(desc, q)}</p>` : ""}
   </li>`;
 }
@@ -186,6 +188,7 @@ function renderCategory(id, animate = true) {
   panel.innerHTML = cat.groups.map((g) => groupHTML(g)).join("");
   setVisual(cat);
   if (animate) animatePanel();
+  document.dispatchEvent(new Event("9one:menu-rendered"));
   ScrollTrigger?.refresh?.();
 }
 
@@ -201,6 +204,7 @@ function renderSearch(q) {
     : `<p class="menu__empty">Nothing matches “${esc(q)}” — try “latte”, “tea” or “pizza”.</p>`;
   if (results[0]) setVisual(results[0]._cat);
   animatePanel();
+  document.dispatchEvent(new Event("9one:menu-rendered"));
 }
 
 tabsEl.addEventListener("click", (e) => {

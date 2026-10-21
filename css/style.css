@@ -227,7 +227,7 @@ body.is-loading .nav { opacity: 0; translate: 0 -100%; }
 }
 .no-webgl .hero__fallback { display: block; }
 .hero__content { position: relative; z-index: 2; max-width: 680px; pointer-events: none; }
-.hero__content a { pointer-events: auto; }
+.hero__content a, .hero__content button { pointer-events: auto; }
 .hero__title {
   font-family: var(--serif); font-weight: 400; margin: 0 0 30px;
   font-size: clamp(56px, 9vw, 148px); line-height: .92; letter-spacing: -.02em;

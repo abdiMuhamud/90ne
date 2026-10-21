@@ -16,6 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Josefin+Sans:wght@200;300;400&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/order.css" />
   <script type="importmap">
     { "imports": {
         "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
@@ -98,7 +99,7 @@
     </nav>
     <div class="nav__actions">
       <span class="nav__status"><i></i><b class="js-open-status">Open today</b></span>
-      <a class="btn btn--gold btn--sm magnetic" href="https://9onecafeorders.vercel.app/" target="_blank" rel="noopener">Order now</a>
+      <button class="btn btn--gold btn--sm magnetic nav__order" data-order>Order now<b class="js-bag-count" hidden>0</b></button>
       <button class="nav__burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button>
     </div>
   </header>
@@ -136,7 +137,7 @@
         </h1>
         <p class="hero__lede">Specialty coffee, Somali shaah and a kitchen open from sunrise to midnight — in the heart of Masalaha. Sit with us, or let us bring it to your door.</p>
         <div class="hero__ctas">
-          <a class="btn btn--gold magnetic" href="https://9onecafeorders.vercel.app/" target="_blank" rel="noopener">Order delivery <svg><use href="#ico-arrow"/></svg></a>
+          <button class="btn btn--gold magnetic" data-order="delivery">Order delivery <svg><use href="#ico-arrow"/></svg></button>
           <a class="btn btn--ghost magnetic" href="#menu">Explore the menu</a>
         </div>
       </div>
@@ -197,27 +198,27 @@
         <div class="signatures__track">
           <article class="sig tilt" data-cursor="Taste">
             <div class="sig__img"><img src="assets/img/mojito-sm.webp" alt="Iced 9ONE Refresher, blue layered with lemon" loading="lazy" style="object-position:50% 30%" /></div>
-            <div class="sig__body"><span class="sig__no">01</span><h3>Iced 9ONE Refresher</h3><p>Our blue signature — citrus, mint and ice.</p><b>$3</b></div>
+            <div class="sig__body"><span class="sig__no">01</span><h3>Iced 9ONE Refresher</h3><p>Our blue signature — citrus, mint and ice.</p><b>$3</b><button class="sig__add" type="button" data-add="Iced 9ONE Refresher" aria-label="Add Iced 9ONE Refresher to your order"><span class="madd__plus" aria-hidden="true"></span><span class="madd__n"></span></button></div>
           </article>
           <article class="sig tilt" data-cursor="Taste">
             <div class="sig__img"><img src="assets/img/latte-cup-sm.webp" alt="Spanish latte in a 9ONE cup" loading="lazy" /></div>
-            <div class="sig__body"><span class="sig__no">02</span><h3>Spanish Latte</h3><p>Velvet milk, condensed sweetness, a double shot.</p><b>$2.5</b></div>
+            <div class="sig__body"><span class="sig__no">02</span><h3>Spanish Latte</h3><p>Velvet milk, condensed sweetness, a double shot.</p><b>$2.5</b><button class="sig__add" type="button" data-add="Spanish Latte" aria-label="Add Spanish Latte to your order"><span class="madd__plus" aria-hidden="true"></span><span class="madd__n"></span></button></div>
           </article>
           <article class="sig tilt" data-cursor="Taste">
             <div class="sig__img"><img src="assets/img/hibiscus-sm.webp" alt="Iced strawberry hibiscus with fresh mint" loading="lazy" style="object-position:50% 40%" /></div>
-            <div class="sig__body"><span class="sig__no">03</span><h3>Strawberry Hibiscus</h3><p>Deep-red hibiscus, berries and fresh mint.</p><b>$3</b></div>
+            <div class="sig__body"><span class="sig__no">03</span><h3>Strawberry Hibiscus</h3><p>Deep-red hibiscus, berries and fresh mint.</p><b>$3</b><button class="sig__add" type="button" data-add="Iced Strawberry Hibiscus" aria-label="Add Iced Strawberry Hibiscus to your order"><span class="madd__plus" aria-hidden="true"></span><span class="madd__n"></span></button></div>
           </article>
           <article class="sig tilt" data-cursor="Taste">
             <div class="sig__img"><img src="assets/img/matcha-sm.webp" alt="Iced matcha latte in a 9ONE cup" loading="lazy" style="object-position:50% 45%" /></div>
-            <div class="sig__body"><span class="sig__no">04</span><h3>Dirty Matcha Latte</h3><p>Ceremonial-style matcha meets espresso.</p><b>$2.5</b></div>
+            <div class="sig__body"><span class="sig__no">04</span><h3>Dirty Matcha Latte</h3><p>Ceremonial-style matcha meets espresso.</p><b>$2.5</b><button class="sig__add" type="button" data-add="Dirty Matcha Latte" aria-label="Add Dirty Matcha Latte to your order"><span class="madd__plus" aria-hidden="true"></span><span class="madd__n"></span></button></div>
           </article>
           <article class="sig tilt" data-cursor="Taste">
             <div class="sig__img"><img src="assets/img/curry-sm.webp" alt="Slow-cooked goat with rice" loading="lazy" /></div>
-            <div class="sig__body"><span class="sig__no">05</span><h3>Somali Goat Hanid</h3><p>Slow-cooked, fragrant — a proud Somali classic.</p><b>$10</b></div>
+            <div class="sig__body"><span class="sig__no">05</span><h3>Somali Goat Hanid</h3><p>Slow-cooked, fragrant — a proud Somali classic.</p><b>$10</b><button class="sig__add" type="button" data-add="Somali Goat Hanid" aria-label="Add Somali Goat Hanid to your order"><span class="madd__plus" aria-hidden="true"></span><span class="madd__n"></span></button></div>
           </article>
           <article class="sig tilt" data-cursor="Taste">
             <div class="sig__img"><img src="assets/img/pancakes-sm.webp" alt="Pancake stack with strawberries" loading="lazy" /></div>
-            <div class="sig__body"><span class="sig__no">06</span><h3>Pancake Stack</h3><p>Butter or honey, banana and strawberry.</p><b>$4</b></div>
+            <div class="sig__body"><span class="sig__no">06</span><h3>Pancake Stack</h3><p>Butter or honey, banana and strawberry.</p><b>$4</b><button class="sig__add" type="button" data-add="Pancake Stack" aria-label="Add Pancake Stack to your order"><span class="madd__plus" aria-hidden="true"></span><span class="madd__n"></span></button></div>
           </article>
           <article class="sig sig--cta">
             <p>130+ drinks & dishes, from 7 am to midnight.</p>
@@ -248,7 +249,7 @@
           </aside>
           <div class="menu__panel" aria-live="polite"></div>
         </div>
-        <p class="menu__foot">Prices in USD. Ask our team about allergens and today’s cakes. <a href="https://9onecafeorders.vercel.app/" target="_blank" rel="noopener">Order anything here for delivery →</a></p>
+        <p class="menu__foot">Prices in USD. Ask our team about allergens and today’s cakes. <button class="linkbtn" data-order="delivery">Tap + on any item to order for delivery →</button></p>
       </div>
     </section>
 
@@ -259,9 +260,9 @@
         <div class="delivery__copy">
           <p class="eyebrow"><span class="line-mark"></span>Delivery across Hargeisa</p>
           <h2 class="title split">9ONE, <em>at your door.</em></h2>
-          <p class="fade-up">The whole menu — from a hot Spanish latte to a loaded 9ONE pizza — packed with care and delivered across Hargeisa. Order online, message us on WhatsApp, or just call.</p>
+          <p class="fade-up">The whole menu — from a hot Spanish latte to a loaded 9ONE pizza — packed with care and delivered across Hargeisa. Build your order right here, share your location in one tap, and we’ll confirm it on WhatsApp.</p>
           <div class="delivery__ctas fade-up">
-            <a class="btn btn--gold magnetic" href="https://9onecafeorders.vercel.app/" target="_blank" rel="noopener">Order online <svg><use href="#ico-arrow"/></svg></a>
+            <button class="btn btn--gold magnetic" data-order="delivery">Start your order <svg><use href="#ico-arrow"/></svg></button>
             <a class="btn btn--ghost magnetic" href="https://wa.me/252638833831?text=Salaan%209ONE!%20I%E2%80%99d%20like%20to%20order%20for%20delivery." target="_blank" rel="noopener"><svg><use href="#ico-wa"/></svg> WhatsApp order</a>
           </div>
           <a class="delivery__call fade-up" href="tel:+252638833831">or call <b>+252 63 883 3831</b></a>
@@ -269,15 +270,15 @@
         <ol class="steps">
           <li class="step glass">
             <span class="step__no">01</span>
-            <div><h3>Choose</h3><p>Browse the full menu online or send us your order on WhatsApp.</p></div>
+            <div><h3>Choose</h3><p>Tap <b>+</b> on anything in the menu — sizes and sides are one tap away.</p></div>
           </li>
           <li class="step glass">
             <span class="step__no">02</span>
-            <div><h3>Confirm</h3><p>We confirm your order and address, then the kitchen gets to work.</p></div>
+            <div><h3>Check out</h3><p>Delivery, pickup or dine-in. Share your location with one tap — no address hunting.</p></div>
           </li>
           <li class="step glass">
             <span class="step__no">03</span>
-            <div><h3>Enjoy</h3><p>Fresh, sealed and on its way — hot drinks hot, iced drinks cold.</p></div>
+            <div><h3>Enjoy</h3><p>Your order lands with our team on WhatsApp. We confirm it, and it’s on its way — hot drinks hot, iced drinks cold.</p></div>
           </li>
         </ol>
       </div>
@@ -431,7 +432,7 @@
     <div class="container">
       <div class="footer__cta">
         <h2 class="footer__big split">Come for the coffee.<br /><em>Stay for the sheeko.</em></h2>
-        <a class="btn btn--gold magnetic" href="https://9onecafeorders.vercel.app/" target="_blank" rel="noopener">Order now <svg><use href="#ico-arrow"/></svg></a>
+        <button class="btn btn--gold magnetic" data-order>Order now <svg><use href="#ico-arrow"/></svg></button>
       </div>
       <div class="footer__grid">
         <div>
@@ -468,5 +469,6 @@
   <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
   <script type="module" src="js/main.js"></script>
   <script type="module" src="js/scene.js"></script>
+  <script type="module" src="js/order.js"></script>
 </body>
 </html>
