@@ -209,7 +209,10 @@ function openLayer(el) {
   requestAnimationFrame(() => backdrop.classList.add("is-on"));
   openLayers++;
   document.body.classList.add("sheet-open");
+  // Freeze the page behind so phones don't scroll it while typing in the sheet.
+  document.documentElement.classList.add("sheet-lock");
   window.__lenis?.stop();
+  fitSheet();
 }
 function closeLayer(el) {
   if (!el.classList.contains("is-open")) return;
@@ -220,8 +223,54 @@ function closeLayer(el) {
     backdrop.classList.remove("is-on");
     setTimeout(() => { if (!openLayers) backdrop.hidden = true; }, 400);
     document.body.classList.remove("sheet-open");
+    document.documentElement.classList.remove("sheet-lock");
     window.__lenis?.start();
   }
+}
+
+/* ----------------------------------------------- phones: keyboard-aware sheet */
+// When the on-screen keyboard opens, iOS and Android shrink the *visual* viewport but leave
+// fixed elements sized to the full screen, so the sheet's buttons end up under the keyboard.
+// Size and place the sheet from visualViewport instead, and go full-height while typing.
+const vv = window.visualViewport;
+const sheetMQ = matchMedia("(max-width: 900px)");
+let baseH = vv ? vv.height : innerHeight;
+const typingInBag = () => bag.contains(document.activeElement) && document.activeElement.matches("input, textarea, select");
+function fitSheet() {
+  if (!sheetMQ.matches) {
+    bag.classList.remove("kb-open");
+    bag.style.removeProperty("--sheet-top");
+    bag.style.removeProperty("--sheet-h");
+    return;
+  }
+  const h = vv ? vv.height : innerHeight;
+  const top = vv ? vv.offsetTop : 0;
+  const typing = typingInBag();
+  if (!typing) baseH = Math.max(h, innerHeight * 0.6);
+  const kb = typing && h < baseH - 120;
+  bag.classList.toggle("kb-open", kb);
+  const sheetH = Math.round(kb ? h : h * 0.92);
+  bag.style.setProperty("--sheet-top", `${Math.round(top + h - sheetH)}px`);
+  bag.style.setProperty("--sheet-h", `${sheetH}px`);
+}
+vv?.addEventListener("resize", fitSheet);
+vv?.addEventListener("scroll", fitSheet);
+addEventListener("resize", fitSheet);
+addEventListener("orientationchange", () => { baseH = 0; setTimeout(fitSheet, 300); });
+bag.addEventListener("focusin", (e) => {
+  if (!e.target.matches("input, textarea, select")) return;
+  // Wait for the keyboard animation, then keep the field in view above it.
+  setTimeout(() => {
+    fitSheet();
+    if (document.activeElement === e.target) revealInSheet(e.target);
+  }, 350);
+});
+bag.addEventListener("focusout", () => setTimeout(fitSheet, 150));
+
+// Scroll only the sheet (never the page behind it) to bring an element to the middle.
+function revealInSheet(el) {
+  const b = body.getBoundingClientRect(), r = el.getBoundingClientRect();
+  body.scrollBy({ top: r.top - b.top - (b.height - r.height) / 2, behavior: reduced ? "auto" : "smooth" });
 }
 backdrop.addEventListener("click", () => { closeLayer(opt); closeLayer(bag); });
 addEventListener("keydown", (e) => { if (e.key === "Escape") { closeLayer(opt); closeLayer(bag); } });
@@ -302,12 +351,12 @@ function renderDetails() {
     </div>
     <form class="form" novalidate>
       <div class="grid2">
-        <label class="field"><span>Name</span><input name="name" autocomplete="name" value="${esc(d.name || "")}" required placeholder="Your name" /></label>
-        <label class="field"><span>Phone</span><input name="phone" type="tel" inputmode="tel" autocomplete="tel" value="${esc(d.phone || "")}" required placeholder="063 …" /></label>
+        <label class="field"><span>Name</span><input name="name" autocomplete="name" enterkeyhint="next" autocapitalize="words" value="${esc(d.name || "")}" required placeholder="Your name" /></label>
+        <label class="field"><span>Phone</span><input name="phone" type="tel" inputmode="tel" autocomplete="tel" enterkeyhint="next" value="${esc(d.phone || "")}" required placeholder="063 …" /></label>
       </div>
       <div class="when when--delivery">
-        <label class="field"><span>Area / neighbourhood</span><input name="area" value="${esc(d.area || "")}" placeholder="e.g. Masalaha, Jigjiga Yar, 26 June…" /></label>
-        <label class="field"><span>Address & landmark</span><input name="address" value="${esc(d.address || "")}" placeholder="Street, building, nearest landmark" /></label>
+        <label class="field"><span>Area / neighbourhood</span><input name="area" enterkeyhint="next" autocomplete="address-level3" value="${esc(d.area || "")}" placeholder="e.g. Masalaha, Jigjiga Yar, 26 June…" /></label>
+        <label class="field"><span>Address & landmark</span><input name="address" enterkeyhint="go" autocomplete="street-address" value="${esc(d.address || "")}" placeholder="Street, building, nearest landmark" /></label>
         <button type="button" class="locbtn ${state.location ? "is-set" : ""}">
           <svg viewBox="0 0 24 24"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="10" r="2.4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
           <span>${state.location ? "Location added — we’ll find you" : "Share my current location"}</span>
@@ -318,7 +367,7 @@ function renderDetails() {
           <select name="pickup">${["As soon as possible", "In 15 minutes", "In 30 minutes", "In 45 minutes", "In 1 hour"].map((o) => `<option ${d.pickup === o ? "selected" : ""}>${o}</option>`).join("")}</select></label>
       </div>
       <div class="when when--dine">
-        <label class="field"><span>Table number</span><input name="table" inputmode="numeric" value="${esc(d.table || "")}" placeholder="Number on your table" /></label>
+        <label class="field"><span>Table number</span><input name="table" inputmode="numeric" enterkeyhint="go" value="${esc(d.table || "")}" placeholder="Number on your table" /></label>
       </div>
       <div class="when when--delivery when--pickup">
         <span class="field__label">Payment</span>
@@ -354,7 +403,7 @@ function readForm() {
   if (err.length) {
     box.hidden = false;
     box.textContent = "Please add " + err.join(", ") + ".";
-    box.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    revealInSheet(box);
     return false;
   }
   return true;
@@ -435,6 +484,7 @@ bag.addEventListener("click", (e) => {
   const step = t.closest("[data-go]");
   if (step) {
     const to = step.dataset.go;
+    document.activeElement?.blur?.(); // close the keyboard before changing step
     if (state.step === "bag") state.note = $(".js-note", body)?.value || state.note;
     if (state.step === "details" && to === "review" && !readForm()) return;
     if (state.step === "details" && to === "bag") readForm();
@@ -465,6 +515,15 @@ bag.addEventListener("click", (e) => {
 });
 bag.addEventListener("change", (e) => {
   if (e.target.name === "mode") { state.mode = e.target.value; save(); syncMode(); renderSteps(); }
+});
+// Keyboard "Next" walks the visible fields; on the last one, "Go" continues to review.
+bag.addEventListener("keydown", (e) => {
+  if (e.key !== "Enter" || !e.target.matches(".form input")) return;
+  e.preventDefault();
+  const fields = $$(".form input:not([type=radio]), .form select", body).filter((f) => f.offsetParent);
+  const next = fields[fields.indexOf(e.target) + 1];
+  if (next) next.focus();
+  else $('[data-go="review"]', foot)?.click();
 });
 bag.addEventListener("input", (e) => {
   if (e.target.classList.contains("js-note")) state.note = e.target.value;

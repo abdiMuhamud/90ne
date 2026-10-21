@@ -6,7 +6,11 @@ const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const finePointer = matchMedia("(hover: hover) and (pointer: fine)").matches;
 const { gsap, ScrollTrigger } = window;
 const hasGsap = !!(gsap && ScrollTrigger);
-if (hasGsap) gsap.registerPlugin(ScrollTrigger);
+if (hasGsap) {
+  gsap.registerPlugin(ScrollTrigger);
+  // Phone keyboards and URL bars change only the height; don't re-measure every pin for that.
+  ScrollTrigger.config({ ignoreMobileResize: true });
+}
 
 /* ---------------------------------------------------------------- utils */
 const money = (n) => "$" + (Number.isInteger(n) ? n : n.toFixed(2));
