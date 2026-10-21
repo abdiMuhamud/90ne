@@ -191,7 +191,7 @@ function init() {
     beanData.push({
       r: 2 + Math.random() * 1.3,
       a: Math.random() * Math.PI * 2,
-      y: -0.6 + Math.random() * 3.4,
+      y: -0.5 + Math.random() * 2.5,
       s: 0.08 + Math.random() * 0.14,
       spin: new THREE.Vector3(Math.random(), Math.random(), Math.random()).multiplyScalar(1.4),
       rot: new THREE.Euler(Math.random() * 6, Math.random() * 6, Math.random() * 6),

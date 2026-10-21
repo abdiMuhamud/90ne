@@ -90,8 +90,12 @@ let lastY = 0;
 function onScroll() {
   const y = scrollY;
   nav.classList.toggle("is-scrolled", y > 40);
-  nav.classList.toggle("is-hidden", y > 600 && y > lastY + 4 && !document.body.classList.contains("nav-open"));
-  if (y < lastY - 4) nav.classList.remove("is-hidden");
+  // Scroll restored during the loader isn't the reader scrolling down, so don't hide for it.
+  const settled = !document.body.classList.contains("is-loading") && !document.body.classList.contains("nav-open");
+  // Hide on a real scroll down, show on a real scroll up; ignore the tiny steps as smooth scroll settles.
+  if (settled && y > 600 && y > lastY + 4) nav.classList.add("is-hidden");
+  else if (y < lastY - 4 || y <= 600) nav.classList.remove("is-hidden");
+  if (y < innerHeight * 0.5) navLinks.forEach((a) => a.classList.remove("is-active"));
   lastY = y;
 }
 addEventListener("scroll", onScroll, { passive: true });
@@ -371,6 +375,8 @@ function runLoader() {
 /* --------------------------------------------------------- scroll motion */
 function initMotion() {
   document.body.classList.remove("is-loading");
+  lastY = scrollY; // measure "scrolling down" from where the reader actually starts
+  nav.classList.remove("is-hidden");
   lenis?.start();
   window.dispatchEvent(new Event("9one:ready"));
   if (!hasGsap || reduced) {
@@ -386,7 +392,6 @@ function initMotion() {
     .from(".hero__lede", { opacity: 0, y: 30, duration: 1.2 }, .45)
     .from(".hero__ctas .btn", { opacity: 0, y: 30, duration: 1.1, stagger: .1 }, .55)
     .from(".hero__aside .hero__stat", { opacity: 0, x: 30, duration: 1.1, stagger: .1 }, .7)
-    .from(".nav", { yPercent: -100, opacity: 0, duration: 1.2 }, .3)
     .from(".hero__scroll", { opacity: 0, duration: 1 }, 1);
 
   gsap.to(".hero__content", {
